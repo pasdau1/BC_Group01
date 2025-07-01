@@ -21,7 +21,7 @@ async function step(label, signer, fn, iface) {
   const after  = await signer.provider.getBalance(signer.address);
   const gasCost = rc.gasUsed * tx.gasPrice;
 
-  console.log(`\n📌 ${label}`);
+  console.log(`\n- ${label}`);
   console.log(`   txHash  : ${rc.hash}`);
   console.log(`   gasUsed : ${rc.gasUsed}`);
   console.log(`   gasCost : ${toEthWei(gasCost)}`);
