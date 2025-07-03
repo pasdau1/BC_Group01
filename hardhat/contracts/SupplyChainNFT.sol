@@ -5,12 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
-/// @title Supply-Chain NFT  –  Escrow-Nachlass für Roaster *und* Shop + Royalty
-/// Ablauf-Beispiel (wei):  
-///  • FarmerBase 1 000 → FarmerProof  900  
-///  • RoasterBase 1 500 → RoasterProof 1 400  
-///  Roaster zahlt 1 000 → Shop zahlt 1 500 → Settlement verteilt  
-///     900 (Farmer) | 1 400 (Roaster) | 100 (Shop-Refund)
 contract SupplyChainNFT is ERC721URIStorage, AccessControl, ERC2981 {
     /* ───── Rollen ───── */
     bytes32 public constant FARMER_ROLE  = keccak256("FARMER_ROLE");
@@ -123,10 +117,10 @@ contract SupplyChainNFT is ERC721URIStorage, AccessControl, ERC2981 {
     function _settle(uint256 id) internal {
         Batch storage b = batches[id];
         if (b.f.roasterSeen && b.f.shopSeen && !b.f.settled) {
-            uint256 refundR = b.p.farmerBase  - b.p.farmerProof;   // 100
-            uint256 refundS = b.p.roasterBase - b.p.roasterProof;  // 100
-            uint256 toFarmer  = b.p.farmerProof;                   // 900
-            uint256 toRoaster = b.p.roasterProof + refundR;        // 1 400
+            uint256 refundR = b.p.farmerBase  - b.p.farmerProof;   
+            uint256 refundS = b.p.roasterBase - b.p.roasterProof;  
+            uint256 toFarmer  = b.p.farmerProof;                   
+            uint256 toRoaster = b.p.roasterProof + refundR;        
 
             payable(b.roaster).transfer(toRoaster);
             payable(b.shop).transfer(refundS);

@@ -3,7 +3,6 @@ const hre = require("hardhat");
 const { formatEther } = hre.ethers;
 const { Buffer } = require("buffer");
 
-/* ───────── kleine Helfer ───────── */
 function toEthWei(bn) {
   return `${formatEther(bn)} ETH (${bn} wei)`;
 }
@@ -13,7 +12,6 @@ async function balanceOf(addr) {
   return toEthWei(bal);
 }
 
-/* Receipt-Logger inkl. Saldo vorher/nachher */
 async function step(label, signer, fn, iface) {
   const before = await signer.provider.getBalance(signer.address);
   const tx     = await fn();
@@ -60,7 +58,7 @@ async function main() {
   const roasterProof = 1_400n;
   const royaltyBps   = 500;
 
-  /* ───────── Metadaten obj + data-URI ───────── */
+  
   const metaObj = {
     name: "Coffee Batch #1",
     description: "Traceable coffee beans – demo flow",
@@ -90,13 +88,12 @@ async function main() {
     "data:application/json;base64," +
     Buffer.from(JSON.stringify(metaObj)).toString("base64");
 
-  /* 1 ─ Mint (Farmer) */
   await step(
     "Mint (Farmer)",
     farmer,
     () =>
       c.connect(farmer).mintBatch(
-        dataUri,              // ← Metadaten inline!
+        dataUri,             
         farmerBase,
         farmerProof,
         roasterBase,
@@ -106,7 +103,6 @@ async function main() {
     iface
   );
 
-  /* 2 ─ Roaster zahlt 1 000 wei */
   await step(
     "Roaster-Handoff (+1 000 wei)",
     roaster,
@@ -114,7 +110,6 @@ async function main() {
     iface
   );
 
-  /* 3 ─ Shop zahlt 1 500 wei & Settled */
   await step(
     "Shop-Handoff (+1 500 wei)",
     shop,
